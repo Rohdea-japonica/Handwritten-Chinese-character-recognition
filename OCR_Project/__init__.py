@@ -32,9 +32,9 @@ if __name__ == "__main__":
     try:
         model.load_state_dict(torch.load("./model.pt", map_location=device))
     except FileNotFoundError:
-        pass
+        print("Not download model!")
 
-    model.train()  # 进入训练模式
+    model.eval()  # 进入训练模式
 
     # 开始训练
     for epoch in range(epochs):

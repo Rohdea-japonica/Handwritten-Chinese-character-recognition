@@ -26,14 +26,14 @@ if __name__ == "__main__":
 
     # 加载模型
     model = OCR_Model().to(device)
+    params = filter(lambda p: p.requires_grad, model.parameters())  # 设置模型基础参数
+    criterion = nn.CrossEntropyLoss()  # 设置误差函数
+    optimizer = optim.Adam(params, lr=lr, weight_decay=1e-4)  # 优化器
     try:
         model.load_state_dict(torch.load("./model.pt", map_location=device))
     except FileNotFoundError:
         pass
 
-    params = filter(lambda p: p.requires_grad, model.parameters())  # 设置模型基础参数
-    criterion = nn.CrossEntropyLoss()  # 设置误差函数
-    optimizer = optim.Adam(params, lr=lr, weight_decay=1e-4)  # 优化器
     model.train()  # 进入训练模式
 
     # 开始训练

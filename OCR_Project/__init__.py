@@ -2,6 +2,7 @@ import torch
 from torch import optim
 from MyDataset import MyDataset
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 import torch.nn as nn
 from OCR_Model import OCR_Model
 
@@ -10,6 +11,7 @@ if __name__ == "__main__":
     lr = 0.01  # 学习率
     batch_size = 512  # batch中的数据量
     device = ""
+    writer = SummaryWriter("log")
     epochs =int(input("请输入训练轮数："))
 
     if torch.cuda.is_available():  # 训练处理器
@@ -38,23 +40,20 @@ if __name__ == "__main__":
     for epoch in range(epochs):
         count = 0
         correct = 0
-        step = 0
         for x, y in train_loader:
-            x.to(device)
-            y.to(device)
             count += len(y)
-            step += 1
-            pred = model(x)
+            pred = model(x.to(device))
             optimizer.zero_grad()
-            loss = criterion(pred, y)
+            loss = criterion(pred, y.to(device))
             loss.backward()
             optimizer.step()    # 参数修改
             label = pred.argmax(1)
-            print("step:", step)
             for i in range(len(y)):
                 if y[i] == label[i]:
                     correct += 1
+        writer.add_scalar("Accuracy/Train", correct / count, epoch)
         print("Current epoch is :", epoch, " Accuracy is :", correct / count)
         torch.save(model.state_dict(), "./model.pt")
+    writer.close()
 
 

@@ -39,7 +39,10 @@ if __name__ == "__main__":
     except FileNotFoundError:
         print("Not download model!")
 
-    model.eval()  # 进入训练模式
+    if module == "train":
+        model.train()  # 进入训练模式
+    elif module == "dev":
+        model.eval()   # 进入测试模式
 
     # 开始训练
     for epoch in range(epochs):
@@ -50,8 +53,9 @@ if __name__ == "__main__":
             pred = model(x.to(device))
             optimizer.zero_grad()
             loss = criterion(pred, y.to(device))
-            loss.backward()
-            optimizer.step()  # 参数修改
+            if module == "train":
+                loss.backward()
+                optimizer.step()  # 参数修改
             label = pred.argmax(1)
             for i in range(len(y)):
                 if y[i] == label[i]:
@@ -61,7 +65,5 @@ if __name__ == "__main__":
         state_dict = {"model": model.state_dict(), "optimizer": optimizer.state_dict(), "epoch": epoch + 1 + pre_epoch}
         if module == "train":
             torch.save(state_dict, "./model.pt")
-        elif module == "dev":
-            torch.save(state_dict, "./dev_model.pt")
     print("Finished!!!")
     writer.close()

@@ -1,8 +1,5 @@
 import torch
 from PIL import Image
-import torch.nn as nn
-from torch import optim
-from torch.utils.data import DataLoader
 from torchvision import transforms
 from OCR_Model import OCR_Model
 

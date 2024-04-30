@@ -12,7 +12,7 @@ if __name__ == "__main__":
     batch_size = 512  # batch中的数据量
     device = ""
     writer = SummaryWriter("log")
-    pre_current = 0
+    pre_epoch = 0
     epochs = int(input("请输入训练轮数："))
 
     if torch.cuda.is_available():  # 训练处理器
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     try:
         position = torch.load("./model.pt", map_location=device)
         model.load_state_dict(position["model"])
-        pre_current = position["epoch"]
+        pre_epoch = position["epoch"]
         optimizer.load_state_dict(position["optimizer"])
     except FileNotFoundError:
         print("Not download model!")
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     model.eval()  # 进入训练模式
 
     # 开始训练
-    for epoch in range(epochs + pre_current):
+    for epoch in range(epochs):
         count = 0
         correct = 0
         for x, y in train_loader:
@@ -56,7 +56,8 @@ if __name__ == "__main__":
                 if y[i] == label[i]:
                     correct += 1
         writer.add_scalar("Accuracy/Train", correct / count, epoch)
-        print("Current epoch is :", epoch, " Accuracy is :", correct / count)
-        state_dict = {"model": model.state_dict(), "optimizer": optimizer.state_dict(), "epoch": epoch}
+        print("Current epoch is :", epoch + pre_epoch, " Accuracy is :", correct / count)
+        state_dict = {"model": model.state_dict(), "optimizer": optimizer.state_dict(), "epoch": epoch + pre_epoch}
         torch.save(state_dict, "./model.pt")
+    print("Finished!!!")
     writer.close()

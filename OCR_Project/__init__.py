@@ -8,11 +8,12 @@ from OCR_Model import OCR_Model
 
 if __name__ == "__main__":
     # 一些变量
-    lr = 0.01  # 学习率
-    batch_size = 512  # batch中的数据量
     device = ""
+    lr = 0.01  # 学习率
+    pre_epoch = 0  # 前一次训练的轮数
+    batch_size = 512  # batch中的数据量
     writer = SummaryWriter("log")
-    pre_epoch = 0
+    module = input("请输入训练模式：")
     epochs = int(input("请输入训练轮数："))
 
     if torch.cuda.is_available():  # 训练处理器
@@ -22,8 +23,8 @@ if __name__ == "__main__":
 
     # 获取训练数据集
     train_dataset = MyDataset()
-    train_dataset.getdata("../data", "train")
-    train_loader = DataLoader(train_dataset, batch_size, drop_last=False, shuffle=False)
+    train_dataset.getdata("../data", module)
+    train_loader = DataLoader(train_dataset, batch_size, drop_last=False)
 
     # 加载模型
     model = OCR_Model().to(device)
@@ -55,9 +56,12 @@ if __name__ == "__main__":
             for i in range(len(y)):
                 if y[i] == label[i]:
                     correct += 1
-        writer.add_scalar("Accuracy/Train", correct / count, epoch)
-        print("Current epoch is :", epoch + pre_epoch, " Accuracy is :", correct / count)
-        state_dict = {"model": model.state_dict(), "optimizer": optimizer.state_dict(), "epoch": epoch + pre_epoch}
-        torch.save(state_dict, "./model.pt")
+        writer.add_scalar("Accuracy/Train", correct / count, epoch)  # 用于tensorboard的数据写入
+        print("Current epoch is :", epoch + pre_epoch + 1, " Accuracy is :", correct / count)
+        state_dict = {"model": model.state_dict(), "optimizer": optimizer.state_dict(), "epoch": epoch + 1 + pre_epoch}
+        if module == "train":
+            torch.save(state_dict, "./model.pt")
+        elif module == "dev":
+            torch.save(state_dict, "./dev_model.pt")
     print("Finished!!!")
     writer.close()

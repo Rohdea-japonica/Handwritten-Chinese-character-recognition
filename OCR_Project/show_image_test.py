@@ -18,7 +18,7 @@ def show_image_label(img_path):
     img = Image.open(img_path).convert("RGB")
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
-    tf = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)])  #
+    tf = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)])
     tensor_img = tf(img)
     tensor_img.unsqueeze_(0)
     label = model(tensor_img.to(device)).argmax(1).item()

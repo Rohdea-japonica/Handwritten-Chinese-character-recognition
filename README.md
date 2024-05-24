@@ -10,6 +10,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;\-- MyDataset.py 数据加载文件  
 &nbsp;&nbsp;&nbsp;&nbsp;\-- OCR_Model.py 模型文件  
 &nbsp;&nbsp;&nbsp;&nbsp;\-- show_image_test.py 单张图片预测文件  
+&nbsp;&nbsp;&nbsp;&nbsp;\-- output_csv.py 输出label标签至csv文件  
 &nbsp;&nbsp;&nbsp;&nbsp;\-- model.pt 模型参数文件  
 \-- README.md 本文件
 

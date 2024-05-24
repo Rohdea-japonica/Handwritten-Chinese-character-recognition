@@ -28,4 +28,5 @@ for x, y in train_loader:
     pred = model(x.to(device))
     label = pred.argmax(1)
     labels = labels + label.tolist()
-print(labels)
+df_labels = pd.DataFrame(labels)
+df_labels.to_csv(module + "_dict.csv", mode='a', header=False, index=None)
